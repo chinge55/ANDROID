@@ -14,21 +14,25 @@ public class MainActivity extends AppCompatActivity {
 
     Button login, register;
     FirebaseUser firebaseUser;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        login = (Button)findViewById(R.id.login);
-        register = (Button)findViewById(R.id.registration);
-
+    protected void onStart() {
+        super.onStart();
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
         if (firebaseUser!=null){
             Intent intent = new Intent(MainActivity.this, Openedactivity.class);
             startActivity(intent);
             finish();
 
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        login = (Button)findViewById(R.id.login);
+        register = (Button)findViewById(R.id.registration);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

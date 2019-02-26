@@ -1,10 +1,16 @@
 package com.example.sangam.chatapp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.sangam.chatapp.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +34,10 @@ public class Openedactivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_openedactivity);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
+
         profile_picture = (CircleImageView)findViewById(R.id.profile_image);
         username = (TextView)findViewById(R.id.username);
 
@@ -37,6 +47,14 @@ public class Openedactivity extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                username.setText(user.getUsername());
+                if(user.getImageURL().equals("default")){
+                    profile_picture.setImageResource(R.mipmap.ic_launcher);
+                } else {
+                    Glide.with(Openedactivity.this).load(user.getImageURL()).into(profile_picture);
+
+                }
 
             }
 
@@ -44,6 +62,23 @@ public class Openedactivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        })
+        });
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.logout:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(Openedactivity.this, MainActivity.class));
+                finish();
+                return true;
+        }
+        return false;
     }
 }
